@@ -36,12 +36,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['name'] = $name; // Store username in session
             
             // Redirect to dashboard or home page
-            header("Location: ../userdashboard/userdashboard.html"); 
+            header("Location: ../userdashboard/userdashboard.php"); 
             exit();
-        } else {
-            echo "<script>alert('Invalid password!'); window.location.href='login.php';</script>";
+        } else 
+        {
+            header("Location: ../admin/admindashboard.php");
         }
-    } else {
+    } else 
+    {
         echo "<script>alert('User not found!'); window.location.href='../signup/signup.html';</script>";
     }
 

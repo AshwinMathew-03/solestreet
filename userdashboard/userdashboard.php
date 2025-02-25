@@ -1,4 +1,10 @@
-
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login/login.html");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,9 +22,10 @@
             <a href="#">Contact</a>
             <a href="#">Sale</a>
         </div>
-        <div class="account-section">
-            <a href="#">My Account</a>
+        <div class="account-section"><img src="https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?q=80&w=1966&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" style="border-radius: 50%;" height="40px" width="40px" alt="">
+            <a href="#"></a> <p><?php echo $_SESSION['name']; ?></p>
             <button class="cart-btn">🛒</button>
+            <a href="../logout.php" class="logout-btn">Logout</a>
         </div>
     </nav>
 
@@ -39,24 +46,24 @@
         <div class="products">
             <div class="product-card">
                 <img src="jordan.jpg" alt="Air Jordan 12 Retro">
-                <h3>slipons</h3>
+                <h3>Air Jordan 12 Retro</h3>
                 <p class="price">₹8,295 to ₹83,533</p>
                 <button class="cart-btn">🛒</button>
             </div>
             <div class="product-card">
-                <img src="jordan1.jpeg" alt="Jordan Air Max 270 React">
+                <img src="nike.jpg" alt="Nike Air Max 270 React">
                 <h3>Nike Air Max 270 React</h3>
                 <p class="price">₹6,995 to ₹14,495</p>
                 <button class="cart-btn">🛒</button>
             </div>
             <div class="product-card">
-                <img src="jordan2.jpeg" alt="Jordan Trinity Lite">
+                <img src="puma.webp" alt="Puma Trinity Lite">
                 <h3>Puma Trinity Lite</h3>
                 <p class="price">₹2,799 to ₹4,199</p>
                 <button class="cart-btn">🛒</button>
             </div>
             <div class="product-card">
-                <img src="jordan3.jpeg" alt="Jordan 4D Run 1.0">
+                <img src="addidas.jpg" alt="Adidas 4D Run 1.0">
                 <h3>Adidas 4D Run 1.0</h3>
                 <p class="price">₹33,784</p>
                 <button class="cart-btn">🛒</button>

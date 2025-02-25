@@ -226,3 +226,16 @@ a {
     text-decoration: none;
     color: black;
 }
+
+.logout-btn {
+    padding: 8px 16px;
+    background-color: #ff4444;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+.logout-btn:hover {
+    background-color: #cc0000;
+}

@@ -26,6 +26,7 @@ body, html
     justify-content: center;
     align-items: center;
     background-color: #f4f4f4; /* Light background for the form */
+    position: relative;
 }
 form 
 {
@@ -44,16 +45,40 @@ input, button
 
 button 
 {
-    background-color: #007bff;
+    background-color: #4a90e2;
     color: white;
     cursor: pointer;
 }
 
 button:hover 
 {
-    background-color: #0056b3;
+    background-color: #357abd;
 }
 .designform
 {
     border-radius: 30px;
+}
+.back-button
+{
+    background-color: #4a90e2;
+    color: white;
+    cursor: pointer;
+    border-radius: 8px;
+    width: 200px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    transition: background-color 0.3s ease;
+}
+.back-button:hover
+{
+    background-color: #357abd;
+}
+a{
+    text-decoration: none;
 }

@@ -86,3 +86,19 @@ body {
         padding: 30px;
     }
 }
+
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 8px 20px;
+    background-color: #fff;
+    color: #000;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.back-btn:hover {
+    background-color: #f0f0f0;
+}
