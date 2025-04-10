@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Your Brand Name</title>
+    <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+    <div class="container">
+        <div class="background-half">
+        </div>
+        <div class="form-half">
+            <form method="post" action="form.php" class="designform">
+                <div class="nav-header">
+                    <a href="/" class="back-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        Back to Home
+                    </a>
+                    <a href="#" class="brand-logo">Your<span>Brand</span></a>
+                </div>
+                
+                <div class="form-header">
+                    <h1>Create Account</h1>
+                    <p>Join us today! Please fill in your information to get started.</p>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" placeholder="John Doe">
+                        <span class="error" id="nameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="john@example.com">
+                        <span class="error" id="emailError"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Create a strong password">
+                    <div class="password-strength" id="passwordStrength"></div>
+                    <span class="error" id="passwordError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmpassword" placeholder="Confirm your password">
+                    <span class="error" id="confirmPasswordError"></span>
+                </div>
+
+                <input type="submit" value="Create Account">
+                
+                <div class="login-link-container">
+                    <a href="../login/login.html" class="login-link">
+                        Already have an account? <strong>Login</strong>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form elements
+        const name = document.getElementById('name');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+
+        // Name validation
+        name.addEventListener('input', function() {
+            const nameError = document.getElementById('nameError');
+            const nameValue = this.value.trim();
+            const nameRegex = /^[A-Za-z\s]{2,10}$/;
+
+            if (nameValue === '') {
+                nameError.textContent = 'Name is required';
+            } else if (!nameRegex.test(nameValue)) {
+                nameError.textContent = 'Name should only contain letters and be 2-10 characters long';
+            } else {
+                nameError.textContent = '';
+            }
+        });
+
+        // Email validation
+        email.addEventListener('input', function() {
+            const emailError = document.getElementById('emailError');
+            const emailValue = this.value.trim();
+            const emailRegex = /^[a-zA-Z0-9._-]+@(gmail\.com|mca\.ajce\.in|hotmail\.com)$/;
+
+            if (emailValue === '') {
+                emailError.textContent = 'Email is required';
+            } else if (!emailRegex.test(emailValue)) {
+                emailError.textContent = 'Invalid domain';
+            } else {
+                emailError.textContent = '';
+            }
+        });
+
+        // Enhanced password validation with strength indicator
+        password.addEventListener('input', function() {
+            const passwordError = document.getElementById('passwordError');
+            const passwordStrength = document.getElementById('passwordStrength');
+            const passwordValue = this.value;
+            
+            const minLength = 8;
+            const hasLetters = /[A-Za-z]/.test(passwordValue);
+            const hasNumbers = /\d/.test(passwordValue);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(passwordValue);
+            const hasUppercase = /[A-Z]/.test(passwordValue);
+            const hasLowercase = /[a-z]/.test(passwordValue);
+
+            let strength = 0;
+            let errorMessage = [];
+
+            if (passwordValue.length >= minLength) strength++;
+            if (hasUppercase && hasLowercase) strength++;
+            if (hasNumbers) strength++;
+            if (hasSpecialChar) strength++;
+
+            // Update strength indicator
+            passwordStrength.className = 'password-strength';
+            if (strength === 0) passwordStrength.style.width = '0%';
+            else if (strength === 1) {
+                passwordStrength.classList.add('strength-weak');
+                passwordStrength.style.width = '33%';
+            }
+            else if (strength === 2 || strength === 3) {
+                passwordStrength.classList.add('strength-medium');
+                passwordStrength.style.width = '66%';
+            }
+            else {
+                passwordStrength.classList.add('strength-strong');
+                passwordStrength.style.width = '100%';
+            }
+
+            // Build error message
+            if (passwordValue.length < minLength) errorMessage.push('at least 8 characters');
+            if (!hasLetters) errorMessage.push('letters');
+            if (!hasNumbers) errorMessage.push('one number');
+            if (!hasSpecialChar) errorMessage.push('one special character');
+
+            if (errorMessage.length > 0) {
+                passwordError.textContent = 'Password must contain ' + errorMessage.join(', ');
+            } else {
+                passwordError.textContent = '';
+            }
+        });
+
+        // Confirm password validation
+        confirmPassword.addEventListener('input', function() {
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            if (this.value !== password.value) {
+                confirmPasswordError.textContent = 'Passwords do not match';
+            } else {
+                confirmPasswordError.textContent = '';
+            }
+        });
+    });
+</script>
+</body>
+</html>

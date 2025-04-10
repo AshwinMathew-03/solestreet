@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solestreet Admin</title>
+    <link rel="stylesheet" href="admindashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="category.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">Solestreet Admin</div>
+            <nav class="sidebar-nav">
+                <a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="category.php"><i class="fas fa-box"></i>Add category</a>
+                <a href="add-product.php"><i class="fas fa-box"></i>Add Products</a>
+                <a href="#"><i class="fas fa-shopping-cart"></i> Orders</a>
+                <a href="#"><i class="fas fa-users"></i> Customers</a>
+                <a href="#"><i class="fas fa-chart-bar"></i> Analytics</a>
+                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                <a href="../logout.php">Logout</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search...">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-content">
+                        <h3>Total Sales</h3>
+                        <p class="number">₹1,23,456</p>
+                        <p class="change positive">+12.5% <span>vs last month</span></p>
+                    </div>
+                    <i class="fas fa-indian-rupee-sign"></i>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <h3>Total Orders</h3>
+                        <p class="number">256</p>
+                        <p class="change positive">+8.2% <span>vs last month</span></p>
+                    </div>
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <h3>Total Customers</h3>
+                        <p class="number">1,245</p>
+                        <p class="change positive">+15.3% <span>vs last month</span></p>
+                    </div>
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+
+            <!-- Recent Orders Table -->
+            <div class="recent-orders">
+                <h2>Recent Orders</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#ORD-001</td>
+                            <td>John Doe</td>
+                            <td>Air Jordan 12 Retro</td>
+                            <td>₹8,295</td>
+                            <td><span class="status pending">Pending</span></td>
+                            <td>
+                                <button class="action-btn">View</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-002</td>
+                            <td>Jane Smith</td>
+                            <td>Nike Air Max 270 React</td>
+                            <td>₹6,995</td>
+                            <td><span class="status completed">Completed</span></td>
+                            <td>
+                                <button class="action-btn">View</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-003</td>
+                            <td>Mike Johnson</td>
+                            <td>Puma Trinity Lite</td>
+                            <td>₹2,799</td>
+                            <td><span class="status processing">Processing</span></td>
+                            <td>
+                                <button class="action-btn">View</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="admindashboard.js"></script>
+</body>
+</html> 

@@ -1,0 +1,173 @@
+body {
+    background-image: url('background2.webp');
+    background-size: cover; /* Ensures the image covers the entire screen */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-attachment: fixed; /* Keeps the image fixed during scrolling (optional) */
+    overflow-x: hidden;
+}
+
+#text
+{
+    font-size: 50px;
+    color: white;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+#textinside
+{
+    font-size: 25px;
+    color:white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+.block
+{
+    position: absolute; /* change to absolute positioning */
+    top: 250px; /* adjust top property */
+    left: 55%; /* adjust left property to center the div */
+    transform: translateX(-50%); /* center the div horizontally */
+    width:800px;
+    height: 100px;
+}
+#text1
+{
+    position: relative;
+    top:-90px;
+    left:55px;
+}
+a 
+{
+  text-decoration: none;
+  color: black; /* Default text color for the link */
+  transition: color 0.3s ease; /* Smooth transition for text color */
+  animation: slideUp 1s ease-out forwards;
+}
+
+#signup 
+{
+  border: none;
+  display: flex;
+  align-items: center; /* Vertically center the text and arrow */
+  justify-content: center; /* Center content horizontally */
+  gap: 8px; /* Space between text and arrow */
+  font-size: 1.125rem; /* Text size: 18px */
+  background-color: white; /* Initial button color */
+  backdrop-filter: blur(10px);
+  font-weight: 600; /* lg:font-semibold */
+  position: relative;
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  overflow: hidden;
+  border-radius: 9999px; /* rounded-full */
+  cursor: pointer;
+  position: absolute;
+  top: 475px;
+  left: 25px;
+  width: 138px;
+  animation: slideUp 1s ease-out forwards;
+}
+#signup::before 
+{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: black; /* Background color on hover */
+  border-radius: 9999px;
+  z-index: -10;
+  transition: all 0.7s;
+  transform: scale(1);
+}
+
+#signup:hover::before 
+{
+  left: 0;
+  transform: scale(1.5); /* Scale effect on hover */
+}
+
+#signup:hover 
+{
+  color: white; /* Text color on hover */
+}
+
+#signup:hover a 
+{
+  color: white; /* Link text color on hover */
+}
+
+/* Styles for the arrow inside a circle */
+.arrow-circle 
+{
+  display: inline-flex; /* Ensure the circle stays inline with the text */
+  justify-content: center;
+  align-items: center;
+  width: 24px; /* Circle size */
+  height: 24px; /* Circle size */
+  background-color: black; /* Circle background color */
+  border-radius: 50%; /* Make it a circle */
+  color: white; /* Arrow color */
+  font-size: 16px; /* Arrow size */
+  margin-left: 8px; /* Space between text and circle */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+}
+#signup:hover .arrow-circle 
+{
+  background-color: white; /* Circle background color on hover */
+  color: black; /* Arrow color on hover */
+  transform: rotate(-50deg); /* Rotate arrow on hover */
+}
+#button
+{
+    position: relative;
+    top:-575px;
+    left:180px;
+}
+.nav 
+{
+  position: relative;
+  z-index: 1; /* Ensure they stay on top */
+}
+.navbar 
+{
+  list-style-type: none;
+  display: flex; /* Use flexbox to make items horizontal */
+  gap: 20px;/*space between list elements*/
+  padding: 20px; /* Optional: Add padding */
+}
+.nav
+{
+  position: absolute;
+  right:30px;
+  top:10px;
+  justify-content: center;
+}
+#login
+{
+  border-radius: 30px;
+  border:none;
+  background-color:white;
+  justify-content: center;
+  width:100px;
+  height:28px;
+  top:50px;
+}
+#loginlink
+{
+  font-size: 16px;
+  color:black;
+}
+#list
+{
+  font-size: 20px;
+  color:black;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+#link
+{
+    color:white;
+    text-decoration: none;
+}
+button
+{
+  cursor: pointer;
+}
