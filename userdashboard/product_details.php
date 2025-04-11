@@ -616,62 +616,61 @@ try {
             </div>
 
             <!-- Add to Cart -->
-            <?php if ($inCart): ?>
-                <button class="add-to-cart already-in-cart" disabled>
-                    <i class="fas fa-check"></i> In Cart
-                </button>
-            <?php else: ?>
-                <?php
-                // Check if there are available sizes
-                $sizeQuery = "SELECT * FROM product_sizes WHERE product_id = ? AND status = 'available' AND stock_quantity > 0";
-                $sizeStmt = $conn->prepare($sizeQuery);
-                $sizeStmt->bind_param("i", $productId);
-                $sizeStmt->execute();
-                $sizeResult = $sizeStmt->get_result();
-                $hasSizes = $sizeResult->num_rows > 0;
+            <form id="add-to-cart-form" action="add_to_cart.php" method="post" class="add-to-cart-form">
+                <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : (($_SESSION['csrf_token'] = bin2hex(random_bytes(32)))); ?>">
                 
-                if (!$hasSizes): 
-                ?>
-                    <div class="out-of-stock">
-                        <span class="out-of-stock-badge">Out of Stock</span>
-                        <p class="out-of-stock-message">This product is currently out of stock in all sizes.</p>
+                <div class="size-selection">
+                    <p class="detail-label">Select Size:</p>
+                    <div class="size-options" id="size-options">
+                        <?php
+                        // Check if there are available sizes
+                        $sizeQuery = "SELECT * FROM product_sizes WHERE product_id = ? AND status = 'available' AND stock_quantity > 0";
+                        $sizeStmt = $conn->prepare($sizeQuery);
+                        $sizeStmt->bind_param("i", $productId);
+                        $sizeStmt->execute();
+                        $sizeResult = $sizeStmt->get_result();
+                        $hasSizes = $sizeResult->num_rows > 0;
+                        
+                        if (!$hasSizes): 
+                        ?>
+                            <p class="no-sizes-available">No sizes available</p>
+                        <?php else: ?>
+                            <?php while ($size = $sizeResult->fetch_assoc()): ?>
+                                <label class="size-option <?php echo ($size['stock_quantity'] == 0) ? 'out-of-stock' : ''; ?>">
+                                    <input type="radio" name="selected_size" value="<?php echo $size['size']; ?>" 
+                                        <?php echo ($size['stock_quantity'] == 0) ? 'disabled' : ''; ?>>
+                                    <span><?php echo $size['size']; ?></span>
+                                    <?php if ($size['stock_quantity'] == 0): ?>
+                                        <span class="out-of-stock-label">Out of Stock</span>
+                                    <?php endif; ?>
+                                </label>
+                            <?php endwhile; ?>
+                        <?php endif; ?>
                     </div>
-                <?php else: ?>
-                <form action="add_to_cart.php" method="post" id="add-to-cart-form">
-                    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-                    
-                    <!-- Size Selection -->
-                    <div class="size-selection">
-                        <h4>Select Size:</h4>
-                        <div class="size-options">
-                            <?php
-                            while ($size = $sizeResult->fetch_assoc()) {
-                                $sizeValue = htmlspecialchars($size['size']);
-                                echo '<div class="size-option">';
-                                echo '<input type="radio" id="size_' . $sizeValue . '" name="selected_size" value="' . $sizeValue . '" required>';
-                                echo '<label for="size_' . $sizeValue . '">' . $sizeValue . '</label>';
-                                echo '</div>';
-                            }
-                            ?>
-                        </div>
-                        <div id="size-error" class="error-message">Please select a size before adding to cart.</div>
-                    </div>
-                    
+                    <div id="size-error" class="error-message">Please select a size</div>
+                </div>
+                
+                <div class="quantity-selection">
+                    <p class="detail-label">Quantity:</p>
                     <div class="quantity-selector">
-                        <label for="quantity">Quantity:</label>
-                        <select name="quantity" id="quantity">
-                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                            <?php endfor; ?>
-                        </select>
+                        <button type="button" class="quantity-btn decrease" id="decrease-quantity" aria-label="Decrease quantity">-</button>
+                        <input type="number" name="quantity" id="quantity-input" value="1" min="1" max="10">
+                        <button type="button" class="quantity-btn increase" id="increase-quantity" aria-label="Increase quantity">+</button>
                     </div>
-
-                    <button type="submit" class="add-to-cart-btn">
-                        <i class="fas fa-shopping-cart"></i> Add to Cart
-                    </button>
-                </form>
+                    <div id="quantity-error" class="error-message">Please select a valid quantity</div>
+                </div>
+                
+                <button type="submit" id="add-to-cart-btn" class="add-to-cart-btn <?php echo ($inCart) ? 'already-in-cart' : ''; ?>"
+                        <?php echo ($inCart) ? 'disabled' : ''; ?>>
+                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                </button>
+                
+                <?php if ($inCart): ?>
+                    <p class="already-in-cart-message">This product is already in your cart</p>
+                    <a href="cart.php" class="view-cart-btn">View Cart</a>
                 <?php endif; ?>
-            <?php endif; ?>
+            </form>
         </div>
     </div>
 
@@ -697,48 +696,216 @@ try {
 
     
     <script>
-    // JavaScript to validate size selection
+    /**
+     * Product Details JavaScript Functionality
+     * Handles add to cart form validation and submission
+     */
     document.addEventListener('DOMContentLoaded', function() {
+        // Cache DOM elements
         const addToCartForm = document.getElementById('add-to-cart-form');
         const sizeError = document.getElementById('size-error');
+        const quantityError = document.getElementById('quantity-error');
+        const sizeOptions = document.querySelector('.size-options');
+        const quantityInput = document.getElementById('quantity-input');
+        const decreaseBtn = document.getElementById('decrease-quantity');
+        const increaseBtn = document.getElementById('increase-quantity');
         
-        if (addToCartForm) {
-            addToCartForm.addEventListener('submit', function(e) {
-                // Check if a size is selected
-                const selectedSize = document.querySelector('input[name="selected_size"]:checked');
-                
-                if (!selectedSize) {
-                    e.preventDefault(); // Prevent form submission
-                    if (sizeError) {
-                        sizeError.style.display = 'block';
-                    }
-                    
-                    const sizeOptions = document.querySelector('.size-options');
-                    if (sizeOptions) {
-                        sizeOptions.classList.add('highlight-error');
-                        
-                        setTimeout(function() {
-                            sizeOptions.classList.remove('highlight-error');
-                        }, 1000);
-                        
-                        // Scroll to size selection
-                        document.querySelector('.size-selection').scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                    }
-                }
-            });
+        // Constants
+        const MIN_QUANTITY = 1;
+        const MAX_QUANTITY = 10;
+        
+        /**
+         * Update quantity value based on user interaction
+         * @param {number} delta - The amount to change the quantity by
+         */
+        function updateQuantity(delta) {
+            const currentValue = parseInt(quantityInput.value) || 1;
+            const newValue = currentValue + delta;
             
-            // Hide error when a size is selected
-            const sizeInputs = document.querySelectorAll('input[name="selected_size"]');
-            sizeInputs.forEach(function(input) {
-                input.addEventListener('change', function() {
-                    if (sizeError) {
-                        sizeError.style.display = 'none';
+            if (newValue >= MIN_QUANTITY && newValue <= MAX_QUANTITY) {
+                quantityInput.value = newValue;
+                quantityError.style.display = 'none';
+            }
+        }
+        
+        /**
+         * Validate the form before submission
+         * @returns {boolean} - Whether the form is valid
+         */
+        function validateForm() {
+            let isValid = true;
+            
+            // Check if a size is selected
+            const selectedSize = document.querySelector('input[name="selected_size"]:checked');
+            if (!selectedSize) {
+                sizeError.style.display = 'block';
+                if (sizeOptions) {
+                    sizeOptions.classList.add('highlight-error');
+                    setTimeout(() => sizeOptions.classList.remove('highlight-error'), 1000);
+                    
+                    // Scroll to size selection
+                    document.querySelector('.size-selection').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+                isValid = false;
+            } else {
+                sizeError.style.display = 'none';
+            }
+            
+            // Validate quantity
+            const quantity = parseInt(quantityInput.value);
+            if (isNaN(quantity) || quantity < MIN_QUANTITY || quantity > MAX_QUANTITY) {
+                quantityError.style.display = 'block';
+                quantityInput.classList.add('highlight-error');
+                setTimeout(() => quantityInput.classList.remove('highlight-error'), 1000);
+                isValid = false;
+            } else {
+                quantityError.style.display = 'none';
+            }
+            
+            return isValid;
+        }
+        
+        /**
+         * Submit form using AJAX
+         * @param {Event} event - The form submission event
+         */
+        function submitForm(event) {
+            event.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Create FormData object
+            const formData = new FormData(addToCartForm);
+            
+            // Create XHR request
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', addToCartForm.action, true);
+            
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        
+                        if (response.success) {
+                            // Update cart count if available
+                            if (response.cart_count) {
+                                const cartCountElements = document.querySelectorAll('.cart-count');
+                                cartCountElements.forEach(el => {
+                                    el.textContent = response.cart_count;
+                                });
+                            }
+                            
+                            // Show success notification
+                            showNotification('success', response.message);
+                            
+                            // Disable the add to cart button
+                            const addToCartBtn = document.getElementById('add-to-cart-btn');
+                            if (addToCartBtn) {
+                                addToCartBtn.disabled = true;
+                                addToCartBtn.classList.add('already-in-cart');
+                                
+                                // Add "View Cart" button
+                                const viewCartBtn = document.createElement('a');
+                                viewCartBtn.href = 'cart.php';
+                                viewCartBtn.className = 'view-cart-btn';
+                                viewCartBtn.textContent = 'View Cart';
+                                addToCartBtn.parentNode.appendChild(viewCartBtn);
+                            }
+                        } else {
+                            if (response.redirect) {
+                                // Redirect to specified page
+                                window.location.href = response.redirect;
+                                return;
+                            }
+                            
+                            // Show error notification
+                            showNotification('error', response.message);
+                        }
+                    } catch (e) {
+                        console.error('Error parsing JSON response:', e);
+                        showNotification('error', 'An unexpected error occurred');
                     }
-                });
+                } else {
+                    showNotification('error', 'Server error: ' + xhr.status);
+                }
+            };
+            
+            xhr.onerror = function() {
+                showNotification('error', 'Network error occurred');
+            };
+            
+            xhr.send(formData);
+        }
+        
+        /**
+         * Display a notification message
+         * @param {string} type - The type of notification (success, error)
+         * @param {string} message - The message to display
+         */
+        function showNotification(type, message) {
+            // Create notification element if it doesn't exist
+            let notification = document.querySelector('.notification');
+            if (!notification) {
+                notification = document.createElement('div');
+                notification.className = 'notification';
+                document.body.appendChild(notification);
+            }
+            
+            // Set notification type and message
+            notification.className = 'notification ' + type;
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                    notification.style.opacity = '1';
+                }, 500);
+            }, 3000);
+        }
+        
+        // Add event listeners
+        if (addToCartForm) {
+            addToCartForm.addEventListener('submit', submitForm);
+        }
+        
+        if (decreaseBtn) {
+            decreaseBtn.addEventListener('click', () => updateQuantity(-1));
+        }
+        
+        if (increaseBtn) {
+            increaseBtn.addEventListener('click', () => updateQuantity(1));
+        }
+        
+        if (quantityInput) {
+            quantityInput.addEventListener('change', function() {
+                const value = parseInt(this.value) || 0;
+                
+                if (value < MIN_QUANTITY) {
+                    this.value = MIN_QUANTITY;
+                } else if (value > MAX_QUANTITY) {
+                    this.value = MAX_QUANTITY;
+                }
+                
+                quantityError.style.display = 'none';
             });
         }
+        
+        // Hide error when a size is selected
+        const sizeInputs = document.querySelectorAll('input[name="selected_size"]');
+        sizeInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                if (sizeError) {
+                    sizeError.style.display = 'none';
+                }
+            });
+        });
     });
     </script>
 </body>
